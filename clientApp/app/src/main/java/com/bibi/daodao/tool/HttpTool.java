@@ -21,7 +21,8 @@ import okhttp3.*;
 public class HttpTool {
     private static final String TAG = "HttpTool";
 
-    private String urlRoot = "http://daodao.free.idcfengye.com";
+//    private String urlRoot = "http://daodao.free.idcfengye.com";
+    private String urlRoot = "http://122.51.223.54";
     private String register = "register";
     private Context mContext;
     private HttpStateHandler mHttpStateHandler;
