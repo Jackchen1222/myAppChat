@@ -8,6 +8,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.bibi.daodao.MainActivity;
+import java.util.concurrent.TimeUnit;
+import okio.ByteString;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -21,12 +24,13 @@ import okhttp3.*;
 public class HttpTool {
     private static final String TAG = "HttpTool";
 
-//    private String urlRoot = "http://daodao.free.idcfengye.com";
-    private String urlRoot = "http://122.51.223.54";
+    private String urlRoot = "http://daodao.free.idcfengye.com";
+//    private String urlRoot = "http://122.51.223.54";
     private String register = "register";
     private Context mContext;
     private HttpStateHandler mHttpStateHandler;
     public HttpTool(Context ctx){
+        showMessageStr = "";
         mContext = ctx;
         mHttpStateHandler = new HttpStateHandler();
     }
@@ -114,6 +118,41 @@ public class HttpTool {
         });
     }
 
+    public void sendMassage(String content){
+        if(content == null || content.equals("")){
+            return;
+        }
+
+        MediaType JSON = MediaType.parse("application/json;charset=utf-8");
+
+        Map<String,String> map = new HashMap<>();
+        map.put("username", "chenbin");
+        map.put("msg", content);
+        JSONObject jsonObject = new JSONObject(map);
+        RequestBody requestBody = RequestBody.create(JSON,jsonObject.toString());
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .post(requestBody)
+                .url(urlRoot + "/msg_send/" )
+                .build();
+
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //请求失败
+                MyLog.e(TAG, e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //请求成功
+                MyLog.i(TAG, response.toString());
+            }
+        });
+    }
+
     public void get(String id, String pwd, String nickName){
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
@@ -143,6 +182,62 @@ public class HttpTool {
 
             }
         });
+    }
+
+    public WebSocket mWebSocket;
+    private String showMessageStr;
+
+    public void webSocketConnect(){
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .build();
+        String url = "ws://daodao.free.idcfengye.com/chat/chenbin/";
+        Request request = new Request.Builder().url(url).build();
+        client.newWebSocket(request, new WebSocketListener() {
+            @Override
+            public void onOpen(WebSocket webSocket, Response response) {
+                super.onOpen(webSocket, response);
+                MyLog.e(TAG, "websocket open:" + response.toString());
+                mWebSocket = webSocket;
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, String text) {
+                super.onMessage(webSocket, text);
+                MyLog.e(TAG, "Message:" + text );
+                showMessageStr += text + '\n';
+                MainActivity.showMessage.setText( showMessageStr );
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, ByteString bytes) {
+                super.onMessage(webSocket, bytes);
+            }
+
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason) {
+                super.onClosing(webSocket, code, reason);
+                MyLog.e(TAG, "code=" + code + ",reason=" + reason);
+                MyLog.e(TAG, "websocket is onClosing!");
+            }
+
+            @Override
+            public void onClosed(WebSocket webSocket, int code, String reason) {
+                super.onClosed(webSocket, code, reason);
+                MyLog.e(TAG, "websocket is OnClosed!");
+            }
+
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+                super.onFailure(webSocket, t, response);
+            }
+        });
+    }
+
+    public void reconnect(){
+
     }
 
 }

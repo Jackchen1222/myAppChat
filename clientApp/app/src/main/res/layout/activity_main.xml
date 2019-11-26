@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/testFunction"
-        android:text="测试"
+        android:id="@+id/connectWebsocket"
+        android:text="连接"
         android:textSize="30sp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints" />
+        android:layout_height="wrap_content" />
+    <TextView
+      android:id="@+id/showMessage"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+        <EditText
+          android:id="@+id/sendContent"
+          android:layout_weight="3"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"/>
+
+        <Button
+          android:id="@+id/sendMessage"
+          android:layout_weight="1"
+          android:text="发送消息"
+          android:textSize="30sp"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

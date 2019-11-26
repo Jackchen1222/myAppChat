@@ -21,4 +21,6 @@ from appChat import views
 urlpatterns = [
     path('register/', views.registerUserInfo),
     path('admin/', admin.site.urls),
+    url(r'chat/(?P<username>\w+)', views.chat_web_socket),
+    path('msg_send/', views.msg_send),
 ]
